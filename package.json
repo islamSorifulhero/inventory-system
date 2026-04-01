@@ -1,0 +1,9 @@
+{
+  "name": "stockflow-inventory",
+  "version": "1.0.0",
+  "description": "Smart Inventory & Order Management System",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "install-deps": "cd backend && npm install"
+  }
+}

@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StockFlow — Smart Inventory System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c10;
+  --surface: #111318;
+  --surface2: #1a1d25;
+  --surface3: #22262f;
+  --border: #2a2e3a;
+  --accent: #6c63ff;
+  --accent2: #ff6584;
+  --accent3: #43e97b;
+  --accent4: #f7971e;
+  --text: #e8eaf0;
+  --text2: #8b90a0;
+  --text3: #545870;
+  --danger: #ff4d6d;
+  --success: #43e97b;
+  --warning: #f7971e;
+  --info: #38b2fc;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* AUTH */
+.auth-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+.auth-wrap::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(108,99,255,0.15) 0%, transparent 70%);
+  top: -200px; right: -200px;
+  pointer-events: none;
+}
+.auth-wrap::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255,101,132,0.1) 0%, transparent 70%);
+  bottom: -100px; left: -100px;
+  pointer-events: none;
+}
+.auth-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 48px 40px;
+  width: 420px;
+  max-width: 95vw;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.auth-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  color: var(--accent);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+.auth-logo span { color: var(--accent2); }
+.auth-sub { color: var(--text2); font-size: 14px; margin-bottom: 36px; }
+.auth-tabs { display: flex; gap: 4px; background: var(--surface2); border-radius: 10px; padding: 4px; margin-bottom: 28px; }
+.auth-tab { flex: 1; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; color: var(--text2); border: none; background: transparent; }
+.auth-tab.active { background: var(--accent); color: #fff; }
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.form-input {
+  width: 100%; padding: 12px 14px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text); font-size: 14px; font-family: 'Outfit', sans-serif;
+  transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+}
+.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,0.15); }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; font-family: 'Outfit', sans-serif; white-space: nowrap; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #7c75ff; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(108,99,255,0.3); }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--surface3); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #ff6b84; }
+.btn-success { background: var(--success); color: #000; }
+.btn-success:hover { background: #5bf08f; }
+.btn-warning { background: var(--warning); color: #000; }
+.btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
+.btn-full { width: 100%; justify-content: center; }
+.btn-demo { background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; }
+.btn-demo:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,101,132,0.3); }
+
+/* LAYOUT */
+.app-layout { display: flex; height: 100vh; overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px; min-width: 240px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid var(--border); }
+.sidebar-logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--accent); }
+.sidebar-logo span { color: var(--accent2); }
+.sidebar-user { font-size: 11px; color: var(--text3); margin-top: 4px; font-family: 'DM Mono', monospace; }
+.sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+.nav-section-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; padding: 4px 8px; margin-bottom: 4px; margin-top: 12px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 9px; cursor: pointer;
+  font-size: 14px; font-weight: 500; color: var(--text2);
+  transition: all 0.15s; margin-bottom: 2px;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: rgba(108,99,255,0.15); color: var(--accent); }
+.nav-item .icon { width: 18px; text-align: center; font-size: 16px; }
+.nav-badge { margin-left: auto; background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 20px; }
+.sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--border); }
+
+/* MAIN CONTENT */
+.main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+.page-header {
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); position: sticky; top: 0; z-index: 10;
+}
+.page-title { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text); }
+.page-sub { font-size: 13px; color: var(--text3); margin-top: 2px; }
+.page-body { padding: 24px 28px; flex: 1; }
+
+/* CARDS */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.card-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.card-body { padding: 20px; }
+
+/* STAT CARDS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 60px; height: 60px;
+  border-radius: 0 0 0 60px;
+  opacity: 0.15;
+}
+.stat-card.purple::after { background: var(--accent); }
+.stat-card.pink::after { background: var(--accent2); }
+.stat-card.green::after { background: var(--accent3); }
+.stat-card.orange::after { background: var(--accent4); }
+.stat-icon { font-size: 22px; margin-bottom: 12px; }
+.stat-value { font-size: 28px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--text); }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+/* TABLE */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+td { padding: 12px 14px; border-bottom: 1px solid rgba(42,46,58,0.5); vertical-align: middle; }
+tr:hover td { background: rgba(108,99,255,0.04); }
+tr:last-child td { border-bottom: none; }
+
+/* BADGES */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-active { background: rgba(67,233,123,0.15); color: var(--success); }
+.badge-out { background: rgba(255,77,109,0.15); color: var(--danger); }
+.badge-pending { background: rgba(247,151,30,0.15); color: var(--warning); }
+.badge-confirmed { background: rgba(56,178,252,0.15); color: var(--info); }
+.badge-shipped { background: rgba(108,99,255,0.15); color: var(--accent); }
+.badge-delivered { background: rgba(67,233,123,0.15); color: var(--success); }
+.badge-cancelled { background: rgba(255,77,109,0.15); color: var(--danger); }
+.badge-high { background: rgba(255,77,109,0.15); color: var(--danger); }
+.badge-medium { background: rgba(247,151,30,0.15); color: var(--warning); }
+.badge-low { background: rgba(67,233,123,0.15); color: var(--success); }
+.badge-ok { background: rgba(67,233,123,0.1); color: var(--success); }
+.badge-low-stock { background: rgba(247,151,30,0.15); color: var(--warning); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+  z-index: 100; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; width: 560px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto;
+  transform: translateY(20px); transition: transform 0.2s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-title { font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 24px; }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+
+/* FORM ELEMENTS */
+select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238b90a0'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+
+/* SEARCH BAR */
+.search-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.search-input-wrap { position: relative; flex: 1; min-width: 200px; }
+.search-input-wrap .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 14px; }
+.search-input { padding-left: 36px !important; }
+
+/* ALERT */
+.alert { padding: 12px 16px; border-radius: 9px; font-size: 13px; margin-bottom: 16px; }
+.alert-error { background: rgba(255,77,109,0.1); border: 1px solid rgba(255,77,109,0.3); color: var(--danger); }
+.alert-success { background: rgba(67,233,123,0.1); border: 1px solid rgba(67,233,123,0.3); color: var(--success); }
+.alert-warning { background: rgba(247,151,30,0.1); border: 1px solid rgba(247,151,30,0.3); color: var(--warning); }
+
+/* GRID LAYOUTS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.flex-row { display: flex; gap: 12px; align-items: center; }
+.flex-col { display: flex; flex-direction: column; gap: 12px; }
+
+/* ORDER ITEMS */
+.order-item-row { display: flex; gap: 10px; align-items: flex-end; padding: 12px; background: var(--surface2); border-radius: 9px; margin-bottom: 8px; position: relative; }
+.order-item-row .remove-btn { position: absolute; top: 8px; right: 8px; background: none; border: none; color: var(--danger); cursor: pointer; font-size: 16px; }
+
+/* CHART */
+.chart-bars { display: flex; gap: 4px; align-items: flex-end; height: 80px; padding: 0 4px; }
+.chart-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.chart-bar { width: 100%; background: var(--accent); border-radius: 3px 3px 0 0; transition: height 0.5s ease; min-height: 2px; opacity: 0.8; }
+.chart-bar:hover { opacity: 1; }
+.chart-label { font-size: 10px; color: var(--text3); font-family: 'DM Mono', monospace; }
+
+/* ACTIVITY LOG */
+.log-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(42,46,58,0.4); }
+.log-item:last-child { border-bottom: none; }
+.log-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.log-dot.order { background: var(--accent); }
+.log-dot.stock { background: var(--accent3); }
+.log-dot.restock { background: var(--warning); }
+.log-dot.system { background: var(--text3); }
+.log-dot.product { background: var(--info); }
+.log-time { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; margin-top: 1px; }
+.log-msg { font-size: 13px; color: var(--text2); }
+
+/* PAGINATION */
+.pagination { display: flex; gap: 6px; align-items: center; justify-content: center; padding-top: 16px; }
+.page-btn { padding: 6px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; color: var(--text2); cursor: pointer; font-size: 13px; font-family: 'Outfit', sans-serif; transition: all 0.15s; }
+.page-btn:hover { border-color: var(--accent); color: var(--accent); }
+.page-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* STOCK INDICATOR */
+.stock-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.stock-bar { height: 4px; background: var(--surface3); border-radius: 2px; flex: 1; overflow: hidden; }
+.stock-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+
+/* EMPTY STATE */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-title { font-size: 16px; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
+.empty-sub { font-size: 13px; }
+
+/* TOAST */
+.toast-container { position: fixed; top: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
+.toast { padding: 12px 18px; border-radius: 10px; font-size: 13px; font-weight: 500; min-width: 250px; max-width: 350px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease; }
+.toast.success { background: rgba(67,233,123,0.15); border: 1px solid rgba(67,233,123,0.4); color: var(--success); }
+.toast.error { background: rgba(255,77,109,0.15); border: 1px solid rgba(255,77,109,0.4); color: var(--danger); }
+.toast.info { background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.4); color: var(--accent); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* RESPONSIVE HIDE */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* LOADING */
+.spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-overlay { position: absolute; inset: 0; background: rgba(10,12,16,0.7); display: flex; align-items: center; justify-content: center; z-index: 10; border-radius: inherit; }
+
+.hidden { display: none !important; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.mt-4 { margin-top: 16px; }
+.mb-4 { margin-bottom: 16px; }
+.gap-2 { gap: 8px; }
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- AUTH PAGE -->
+<div id="authPage">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">Stock<span>Flow</span></div>
+      <div class="auth-sub">Smart Inventory & Order Management</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+        <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+      <div id="authError" class="alert alert-error hidden"></div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="loginEmail" placeholder="admin@demo.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="loginPassword" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="doLogin()" style="margin-bottom:12px">
+          Sign In
+        </button>
+        <button class="btn btn-demo btn-full" onclick="demoLogin()">
+          ⚡ Demo Login
+        </button>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="signupForm" class="hidden">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="signupName" placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="signupEmail" placeholder="john@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="signupPassword" placeholder="Min 6 characters">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="doSignup()">Create Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appPage" class="hidden">
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">Stock<span>Flow</span></div>
+        <div class="sidebar-user" id="sidebarUser">Loading...</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Overview</div>
+        <div class="nav-item active" onclick="navigate('dashboard')" data-page="dashboard">
+          <span class="icon">📊</span> Dashboard
+        </div>
+        <div class="nav-section-label">Catalog</div>
+        <div class="nav-item" onclick="navigate('categories')" data-page="categories">
+          <span class="icon">🏷️</span> Categories
+        </div>
+        <div class="nav-item" onclick="navigate('products')" data-page="products">
+          <span class="icon">📦</span> Products
+        </div>
+        <div class="nav-section-label">Operations</div>
+        <div class="nav-item" onclick="navigate('orders')" data-page="orders">
+          <span class="icon">🛒</span> Orders
+        </div>
+        <div class="nav-item" onclick="navigate('restock')" data-page="restock">
+          <span class="icon">🔄</span> Restock Queue
+          <span class="nav-badge" id="restockBadge" style="display:none">0</span>
+        </div>
+        <div class="nav-section-label">System</div>
+        <div class="nav-item" onclick="navigate('activity')" data-page="activity">
+          <span class="icon">📋</span> Activity Log
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn btn-secondary btn-full btn-sm" onclick="logout()">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content" id="mainContent">
+      <!-- Pages rendered here by JS -->
+    </main>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+const API = 'http://localhost:5000/api';
+let token = localStorage.getItem('inv_token');
+let currentUser = JSON.parse(localStorage.getItem('inv_user') || 'null');
+let currentPage = 'dashboard';
+
+// ==================== UTILS ====================
+function api(path, options = {}) {
+  return fetch(API + path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      ...(options.headers || {})
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined
+  }).then(async r => {
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Request failed');
+    return data;
+  });
+}
+
+function toast(msg, type = 'info') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+function showModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+}
+
+function formatDate(d) {
+  return new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function formatCurrency(n) { return '$' + Number(n).toFixed(2); }
+
+function stockColor(stock, threshold) {
+  if (stock === 0) return 'var(--danger)';
+  if (stock < threshold) return 'var(--warning)';
+  return 'var(--success)';
+}
+
+function paginationHtml(page, pages, fn) {
+  if (pages <= 1) return '';
+  let html = '<div class="pagination">';
+  html += `<button class="page-btn" onclick="${fn}(${page - 1})" ${page === 1 ? 'disabled' : ''}>←</button>`;
+  for (let i = 1; i <= pages; i++) {
+    if (Math.abs(i - page) < 3 || i === 1 || i === pages) {
+      html += `<button class="page-btn ${i === page ? 'active' : ''}" onclick="${fn}(${i})">${i}</button>`;
+    } else if (Math.abs(i - page) === 3) html += '<span style="color:var(--text3);padding:0 4px">…</span>';
+  }
+  html += `<button class="page-btn" onclick="${fn}(${page + 1})" ${page === pages ? 'disabled' : ''}>→</button>`;
+  html += '</div>';
+  return html;
+}
+
+// ==================== AUTH ====================
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t, i) => t.classList.toggle('active', (i === 0) === (tab === 'login')));
+  document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+  document.getElementById('signupForm').classList.toggle('hidden', tab !== 'signup');
+  document.getElementById('authError').classList.add('hidden');
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  try {
+    const data = await api('/auth/login', { method: 'POST', body: { email, password } });
+    onAuth(data);
+  } catch (e) {
+    const el = document.getElementById('authError');
+    el.textContent = e.message; el.classList.remove('hidden');
+  }
+}
+
+async function doSignup() {
+  const name = document.getElementById('signupName').value;
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+  try {
+    const data = await api('/auth/signup', { method: 'POST', body: { name, email, password } });
+    onAuth(data);
+  } catch (e) {
+    const el = document.getElementById('authError');
+    el.textContent = e.message; el.classList.remove('hidden');
+  }
+}
+
+function demoLogin() {
+  document.getElementById('loginEmail').value = 'admin@demo.com';
+  document.getElementById('loginPassword').value = 'demo123';
+  doLogin();
+}
+
+function onAuth(data) {
+  token = data.token;
+  currentUser = data.user;
+  localStorage.setItem('inv_token', token);
+  localStorage.setItem('inv_user', JSON.stringify(currentUser));
+  document.getElementById('authPage').classList.add('hidden');
+  document.getElementById('appPage').classList.remove('hidden');
+  document.getElementById('sidebarUser').textContent = `${currentUser.name} · ${currentUser.role}`;
+  navigate('dashboard');
+}
+
+function logout() {
+  token = null; currentUser = null;
+  localStorage.removeItem('inv_token'); localStorage.removeItem('inv_user');
+  document.getElementById('appPage').classList.add('hidden');
+  document.getElementById('authPage').classList.remove('hidden');
+}
+
+// ==================== NAVIGATION ====================
+function navigate(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === page);
+  });
+  const pages = { dashboard: renderDashboard, categories: renderCategories, products: renderProducts, orders: renderOrders, restock: renderRestock, activity: renderActivity };
+  if (pages[page]) pages[page]();
+  updateRestockBadge();
+}
+
+async function updateRestockBadge() {
+  try {
+    const queue = await api('/restock-queue');
+    const badge = document.getElementById('restockBadge');
+    if (queue.length > 0) { badge.textContent = queue.length; badge.style.display = ''; }
+    else badge.style.display = 'none';
+  } catch {}
+}
+
+// ==================== DASHBOARD ====================
+async function renderDashboard() {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="page-header">
+      <div><div class="page-title">Dashboard</div><div class="page-sub">Welcome back, ${currentUser?.name}</div></div>
+      <button class="btn btn-primary btn-sm" onclick="navigate('orders')">+ New Order</button>
+    </div>
+    <div class="page-body" id="dashBody"><div class="text-center" style="padding:60px;color:var(--text3)"><div class="spinner" style="margin:0 auto"></div></div></div>`;
+  try {
+    const d = await api('/dashboard');
+    document.getElementById('dashBody').innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card purple">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-value">${d.totalOrdersToday}</div>
+          <div class="stat-label">Orders Today</div>
+        </div>
+        <div class="stat-card pink">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-value">${d.pendingOrders}</div>
+          <div class="stat-label">Pending Orders</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-value">${d.lowStockItems}</div>
+          <div class="stat-label">Low Stock Items</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value">${formatCurrency(d.revenueToday)}</div>
+          <div class="stat-label">Revenue Today</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:24px">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Orders This Week</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-bars" id="weekChart"></div>
+            <div class="chart-bars" style="height:auto;margin-top:4px">
+              ${d.weeklyData.map(w => `<div class="chart-bar-wrap"><div class="chart-label">${w.label}</div></div>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📋 Recent Activity</div>
+          </div>
+          <div class="card-body" style="padding:12px 20px">
+            ${d.activityLog.slice(0,6).map(l => `
+              <div class="log-item">
+                <div class="log-dot ${l.type}"></div>
+                <div>
+                  <div class="log-msg">${l.message}</div>
+                  <div class="log-time">${formatDate(l.time)}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📦 Product Stock Summary</div>
+          <button class="btn btn-secondary btn-sm" onclick="navigate('products')">View All</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Product</th><th>Stock</th><th>Level</th><th>Status</th></tr></thead>
+            <tbody>
+              ${d.productSummary.map(p => {
+                const pct = Math.min(100, (p.stock / (p.threshold * 2)) * 100);
+                const color = stockColor(p.stock, p.threshold);
+                return `<tr>
+                  <td><strong style="color:var(--text)">${p.name}</strong></td>
+                  <td><span style="font-family:'DM Mono',monospace;font-size:13px">${p.stock} units</span></td>
+                  <td style="min-width:120px">
+                    <div class="stock-bar-wrap">
+                      <div class="stock-bar"><div class="stock-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+                      <span style="font-size:11px;color:${color}">${p.stockStatus}</span>
+                    </div>
+                  </td>
+                  <td><span class="badge badge-${p.status === 'active' ? 'active' : 'out'}">${p.status === 'active' ? '● Active' : '○ Out of Stock'}</span></td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    // Draw chart
+    const max = Math.max(...d.weeklyData.map(w => w.orders), 1);
+    document.getElementById('weekChart').innerHTML = d.weeklyData.map(w => {
+      const h = Math.max(4, (w.orders / max) * 80);
+      return `<div class="chart-bar-wrap">
+        <div class="chart-bar" style="height:${h}px" title="${w.orders} orders, ${formatCurrency(w.revenue)}"></div>
+      </div>`;
+    }).join('');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ==================== CATEGORIES ====================
+let catsData = [];
+async function renderCategories() {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="page-header">
+      <div><div class="page-title">Categories</div><div class="page-sub">Manage product categories</div></div>
+      <button class="btn btn-primary" onclick="showAddCategory()">+ Add Category</button>
+    </div>
+    <div class="page-body" id="catsBody"><div class="text-center" style="padding:60px;color:var(--text3)"><div class="spinner" style="margin:0 auto"></div></div></div>`;
+  await loadCategories();
+}
+
+async function loadCategories() {
+  try {
+    catsData = await api('/categories');
+    if (!catsData.length) {
+      document.getElementById('catsBody').innerHTML = `<div class="empty-state"><div class="empty-icon">🏷️</div><div class="empty-title">No categories yet</div><div class="empty-sub">Add your first category to organize products</div></div>`;
+      return;
+    }
+    document.getElementById('catsBody').innerHTML = `
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Category Name</th><th>Created</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${catsData.map(c => `<tr>
+                <td><strong style="color:var(--text)">${c.name}</strong></td>
+                <td><span style="color:var(--text3);font-size:12px">${formatDate(c.createdAt)}</span></td>
+                <td><button class="btn btn-danger btn-sm" onclick="deleteCategory('${c.id}','${c.name}')">Delete</button></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function showAddCategory() {
+  showModal(`
+    <div class="modal-title">Add Category</div>
+    <div class="form-group">
+      <label class="form-label">Category Name</label>
+      <input type="text" class="form-input" id="newCatName" placeholder="e.g., Electronics">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addCategory()">Add Category</button>
+    </div>`);
+}
+
+async function addCategory() {
+  const name = document.getElementById('newCatName').value.trim();
+  if (!name) return toast('Category name required', 'error');
+  try {
+    await api('/categories', { method: 'POST', body: { name } });
+    toast(`Category "${name}" created`, 'success');
+    closeModal();
+    loadCategories();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteCategory(id, name) {
+  if (!confirm(`Delete category "${name}"?`)) return;
+  try {
+    await api(`/categories/${id}`, { method: 'DELETE' });
+    toast('Category deleted', 'success');
+    loadCategories();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ==================== PRODUCTS ====================
+let prodsPage = 1, prodsSearch = '', prodsStatus = '', prodsCat = '';
+async function renderProducts() {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="page-header">
+      <div><div class="page-title">Products</div><div class="page-sub">Manage inventory products</div></div>
+      <button class="btn btn-primary" onclick="showAddProduct()">+ Add Product</button>
+    </div>
+    <div class="page-body">
+      <div class="search-bar mb-4" style="margin-bottom:16px">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-input search-input" placeholder="Search products..." oninput="prodsSearch=this.value;prodsPage=1;loadProducts()">
+        </div>
+        <select class="form-input" style="width:160px" onchange="prodsStatus=this.value;prodsPage=1;loadProducts()">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="out_of_stock">Out of Stock</option>
+        </select>
+        <select class="form-input" style="width:160px" id="catFilter" onchange="prodsCat=this.value;prodsPage=1;loadProducts()">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+      <div id="prodsBody"></div>
+    </div>`;
+  try {
+    const cats = await api('/categories');
+    const sel = document.getElementById('catFilter');
+    cats.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.name; sel.appendChild(o); });
+  } catch {}
+  loadProducts();
+}
+
+async function loadProducts(page) {
+  if (page) prodsPage = page;
+  try {
+    const params = new URLSearchParams({ page: prodsPage, limit: 10, search: prodsSearch, status: prodsStatus, category: prodsCat });
+    const data = await api(`/products?${params}`);
+    if (!data.products.length) {
+      document.getElementById('prodsBody').innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No products found</div><div class="empty-sub">Try adjusting your search filters</div></div>`;
+      return;
+    }
+    document.getElementById('prodsBody').innerHTML = `
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${data.products.map(p => {
+                const pct = Math.min(100, (p.stock / (p.threshold * 2)) * 100);
+                const color = stockColor(p.stock, p.threshold);
+                return `<tr>
+                  <td><strong style="color:var(--text)">${p.name}</strong><div style="font-size:11px;color:var(--text3)">Threshold: ${p.threshold}</div></td>
+                  <td><span class="badge" style="background:rgba(108,99,255,0.1);color:var(--accent)">${p.categoryName}</span></td>
+                  <td><span style="font-family:'DM Mono',monospace">${formatCurrency(p.price)}</span></td>
+                  <td>
+                    <div class="stock-bar-wrap" style="min-width:100px">
+                      <div class="stock-bar"><div class="stock-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+                      <span style="font-size:12px;font-family:'DM Mono',monospace;color:${color}">${p.stock}</span>
+                    </div>
+                  </td>
+                  <td><span class="badge badge-${p.status === 'active' ? 'active' : 'out'}">${p.status === 'active' ? '● Active' : '○ Out of Stock'}</span></td>
+                  <td>
+                    <div class="flex-row gap-2">
+                      <button class="btn btn-secondary btn-sm" onclick="showEditProduct('${p.id}')">Edit</button>
+                      <button class="btn btn-warning btn-sm" onclick="showRestockProduct('${p.id}','${p.name}',${p.stock})">Restock</button>
+                      <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}','${p.name}')">Del</button>
+                    </div>
+                  </td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        ${paginationHtml(data.page, data.pages, 'loadProducts')}
+      </div>`;
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function showAddProduct() {
+  let cats = [];
+  try { cats = await api('/categories'); } catch {}
+  if (!cats.length) { toast('Please add a category first', 'error'); return; }
+  showModal(`
+    <div class="modal-title">Add Product</div>
+    <div id="prodFormError" class="alert alert-error hidden"></div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Product Name</label>
+        <input type="text" class="form-input" id="pName" placeholder="e.g., iPhone 13">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-input" id="pCat">
+          <option value="">Select category</option>
+          ${cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="form-group">
+        <label class="form-label">Price ($)</label>
+        <input type="number" class="form-input" id="pPrice" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Stock Qty</label>
+        <input type="number" class="form-input" id="pStock" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Min Threshold</label>
+        <input type="number" class="form-input" id="pThreshold" placeholder="5" min="1">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addProduct()">Add Product</button>
+    </div>`);
+}
+
+async function addProduct() {
+  const body = { name: document.getElementById('pName').value, categoryId: document.getElementById('pCat').value, price: document.getElementById('pPrice').value, stock: document.getElementById('pStock').value, threshold: document.getElementById('pThreshold').value };
+  try {
+    await api('/products', { method: 'POST', body });
+    toast('Product added successfully', 'success');
+    closeModal();
+    loadProducts();
+    updateRestockBadge();
+  } catch (e) {
+    const el = document.getElementById('prodFormError');
+    el.textContent = e.message; el.classList.remove('hidden');
+  }
+}
+
+async function showEditProduct(id) {
+  let cats = [], p;
+  try {
+    [cats, { products }] = await Promise.all([api('/categories'), api(`/products?limit=200`)]);
+    p = products.find(x => x.id === id);
+    if (!p) { const data = await api(`/products?limit=200`); p = data.products.find(x => x.id === id); }
+  } catch {}
+  // Fetch fresh
+  try {
+    const d = await api(`/products?limit=200`);
+    p = d.products.find(x => x.id === id);
+    cats = await api('/categories');
+  } catch {}
+  if (!p) return;
+  showModal(`
+    <div class="modal-title">Edit Product: ${p.name}</div>
+    <div id="editProdError" class="alert alert-error hidden"></div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Product Name</label>
+        <input type="text" class="form-input" id="epName" value="${p.name}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-input" id="epCat">
+          ${cats.map(c => `<option value="${c.id}" ${c.id === p.categoryId ? 'selected' : ''}>${c.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="form-group">
+        <label class="form-label">Price ($)</label>
+        <input type="number" class="form-input" id="epPrice" value="${p.price}" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Stock Qty</label>
+        <input type="number" class="form-input" id="epStock" value="${p.stock}" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Min Threshold</label>
+        <input type="number" class="form-input" id="epThreshold" value="${p.threshold}" min="1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-input" id="epStatus">
+        <option value="active" ${p.status === 'active' ? 'selected' : ''}>Active</option>
+        <option value="out_of_stock" ${p.status === 'out_of_stock' ? 'selected' : ''}>Out of Stock</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="editProduct('${p.id}')">Save Changes</button>
+    </div>`);
+}
+
+async function editProduct(id) {
+  const body = { name: document.getElementById('epName').value, categoryId: document.getElementById('epCat').value, price: document.getElementById('epPrice').value, stock: document.getElementById('epStock').value, threshold: document.getElementById('epThreshold').value, status: document.getElementById('epStatus').value };
+  try {
+    await api(`/products/${id}`, { method: 'PUT', body });
+    toast('Product updated', 'success');
+    closeModal();
+    loadProducts();
+    updateRestockBadge();
+  } catch (e) {
+    const el = document.getElementById('editProdError');
+    el.textContent = e.message; el.classList.remove('hidden');
+  }
+}
+
+function showRestockProduct(id, name, stock) {
+  showModal(`
+    <div class="modal-title">Restock: ${name}</div>
+    <div class="alert alert-warning">Current stock: <strong>${stock} units</strong></div>
+    <div class="form-group">
+      <label class="form-label">Add Quantity</label>
+      <input type="number" class="form-input" id="restockQty" placeholder="Enter quantity to add" min="1">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-success" onclick="restockProduct('${id}')">✓ Restock</button>
+    </div>`);
+}
+
+async function restockProduct(id) {
+  const qty = parseInt(document.getElementById('restockQty').value);
+  if (!qty || qty <= 0) return toast('Enter valid quantity', 'error');
+  try {
+    await api(`/products/${id}/restock`, { method: 'POST', body: { quantity: qty } });
+    toast(`Restocked +${qty} units`, 'success');
+    closeModal();
+    loadProducts();
+    updateRestockBadge();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteProduct(id, name) {
+  if (!confirm(`Delete product "${name}"?`)) return;
+  try {
+    await api(`/products/${id}`, { method: 'DELETE' });
+    toast('Product deleted', 'success');
+    loadProducts();
+    updateRestockBadge();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ==================== ORDERS ====================
+let ordersPage = 1, ordersSearch = '', ordersStatus = '', ordersDate = '';
+let orderItems = [], availableProducts = [];
+
+async function renderOrders() {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="page-header">
+      <div><div class="page-title">Orders</div><div class="page-sub">Manage customer orders</div></div>
+      <button class="btn btn-primary" onclick="showCreateOrder()">+ New Order</button>
+    </div>
+    <div class="page-body">
+      <div class="search-bar mb-4" style="margin-bottom:16px">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-input search-input" placeholder="Search orders..." oninput="ordersSearch=this.value;ordersPage=1;loadOrders()">
+        </div>
+        <select class="form-input" style="width:160px" onchange="ordersStatus=this.value;ordersPage=1;loadOrders()">
+          <option value="">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+        <input type="date" class="form-input" style="width:160px" onchange="ordersDate=this.value;ordersPage=1;loadOrders()">
+      </div>
+      <div id="ordersBody"></div>
+    </div>`;
+  loadOrders();
+}
+
+async function loadOrders(page) {
+  if (page) ordersPage = page;
+  try {
+    const params = new URLSearchParams({ page: ordersPage, limit: 10, search: ordersSearch, status: ordersStatus, date: ordersDate });
+    const data = await api(`/orders?${params}`);
+    if (!data.orders.length) {
+      document.getElementById('ordersBody').innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-title">No orders found</div><div class="empty-sub">Create your first order</div></div>`;
+      return;
+    }
+    const statusColors = { Pending: 'pending', Confirmed: 'confirmed', Shipped: 'shipped', Delivered: 'delivered', Cancelled: 'cancelled' };
+    document.getElementById('ordersBody').innerHTML = `
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${data.orders.map(o => `<tr>
+                <td><span style="font-family:'DM Mono',monospace;color:var(--accent)">${o.orderNumber}</span></td>
+                <td><strong style="color:var(--text)">${o.customerName}</strong></td>
+                <td><span style="color:var(--text2);font-size:12px">${o.items.length} item(s)</span></td>
+                <td><span style="font-family:'DM Mono',monospace;font-weight:600">${formatCurrency(o.totalPrice)}</span></td>
+                <td><span class="badge badge-${statusColors[o.status] || ''}">${o.status}</span></td>
+                <td><span style="color:var(--text3);font-size:12px">${formatDate(o.createdAt)}</span></td>
+                <td>
+                  <div class="flex-row gap-2">
+                    <button class="btn btn-secondary btn-sm" onclick="viewOrder('${o.id}')">View</button>
+                    ${o.status !== 'Cancelled' && o.status !== 'Delivered' ? `<button class="btn btn-primary btn-sm" onclick="showUpdateStatus('${o.id}','${o.status}')">Update</button>` : ''}
+                    ${o.status !== 'Cancelled' ? `<button class="btn btn-danger btn-sm" onclick="cancelOrder('${o.id}')">Cancel</button>` : ''}
+                  </div>
+                </td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        ${paginationHtml(data.page, data.pages, 'loadOrders')}
+      </div>`;
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function showCreateOrder() {
+  orderItems = [];
+  try { availableProducts = (await api('/products?limit=200&status=active')).products; } catch {}
+  renderOrderModal();
+}
+
+function renderOrderModal() {
+  const prodOptions = availableProducts.map(p => `<option value="${p.id}" data-price="${p.price}" data-stock="${p.stock}" data-name="${p.name}">${p.name} — ${formatCurrency(p.price)} (${p.stock} in stock)</option>`).join('');
+  const itemsHtml = orderItems.map((item, i) => `
+    <div class="order-item-row">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${item.productName}</div>
+        <div style="font-size:12px;color:var(--text3)">${formatCurrency(item.unitPrice)} × ${item.quantity} = ${formatCurrency(item.subtotal)}</div>
+      </div>
+      <button class="remove-btn" onclick="removeOrderItem(${i})">✕</button>
+    </div>`).join('');
+  const total = orderItems.reduce((s, i) => s + i.subtotal, 0);
+
+  showModal(`
+    <div class="modal-title">Create New Order</div>
+    <div id="orderError" class="alert alert-error hidden"></div>
+    <div class="form-group">
+      <label class="form-label">Customer Name</label>
+      <input type="text" class="form-input" id="custName" placeholder="Enter customer name">
+    </div>
+    <div class="divider"></div>
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px">Order Items</div>
+    <div id="orderItemsList">${itemsHtml || '<div style="color:var(--text3);font-size:13px;padding:8px 0">No items added yet</div>'}</div>
+    <div class="grid-2" style="margin-top:12px">
+      <div class="form-group">
+        <label class="form-label">Add Product</label>
+        <select class="form-input" id="selProduct">
+          <option value="">Select product...</option>
+          ${prodOptions}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quantity</label>
+        <div class="flex-row">
+          <input type="number" class="form-input" id="selQty" placeholder="1" min="1" value="1">
+          <button class="btn btn-secondary" onclick="addOrderItem()">+ Add</button>
+        </div>
+      </div>
+    </div>
+    ${orderItems.length ? `<div style="text-align:right;font-size:16px;font-weight:700;color:var(--text);margin-top:8px">Total: ${formatCurrency(total)}</div>` : ''}
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitOrder()" ${!orderItems.length ? 'disabled' : ''}>Place Order</button>
+    </div>`);
+}
+
+function addOrderItem() {
+  const sel = document.getElementById('selProduct');
+  const qty = parseInt(document.getElementById('selQty').value);
+  const opt = sel.options[sel.selectedIndex];
+  if (!sel.value) return toast('Select a product', 'error');
+  if (!qty || qty <= 0) return toast('Enter valid quantity', 'error');
+  const pid = sel.value, price = parseFloat(opt.dataset.price), stock = parseInt(opt.dataset.stock), name = opt.dataset.name;
+  if (orderItems.find(i => i.productId === pid)) { toast('This product is already added to the order.', 'error'); return; }
+  if (qty > stock) { toast(`Only ${stock} items available in stock for "${name}"`, 'error'); return; }
+  orderItems.push({ productId: pid, productName: name, quantity: qty, unitPrice: price, subtotal: qty * price });
+  renderOrderModal();
+}
+
+function removeOrderItem(idx) {
+  orderItems.splice(idx, 1);
+  renderOrderModal();
+}
+
+async function submitOrder() {
+  const customerName = document.getElementById('custName').value.trim();
+  if (!customerName) { document.getElementById('orderError').textContent = 'Customer name required'; document.getElementById('orderError').classList.remove('hidden'); return; }
+  if (!orderItems.length) return;
+  try {
+    const order = await api('/orders', { method: 'POST', body: { customerName, items: orderItems.map(i => ({ productId: i.productId, quantity: i.quantity })) } });
+    toast(`Order ${order.orderNumber} created!`, 'success');
+    closeModal();
+    loadOrders();
+    updateRestockBadge();
+  } catch (e) {
+    const el = document.getElementById('orderError');
+    el.textContent = e.message; el.classList.remove('hidden');
+  }
+}
+
+async function viewOrder(id) {
+  try {
+    const data = await api(`/orders?limit=200`);
+    const o = data.orders.find(x => x.id === id);
+    if (!o) return;
+    const statusColors = { Pending: 'pending', Confirmed: 'confirmed', Shipped: 'shipped', Delivered: 'delivered', Cancelled: 'cancelled' };
+    showModal(`
+      <div class="modal-title">${o.orderNumber}</div>
+      <div class="flex-row" style="margin-bottom:16px">
+        <div><div style="font-size:12px;color:var(--text3)">Customer</div><div style="font-weight:600">${o.customerName}</div></div>
+        <div style="margin-left:auto"><span class="badge badge-${statusColors[o.status]}">${o.status}</span></div>
+      </div>
+      <table style="width:100%;margin-bottom:16px">
+        <thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr></thead>
+        <tbody>
+          ${o.items.map(i => `<tr>
+            <td>${i.productName}</td>
+            <td>${i.quantity}</td>
+            <td>${formatCurrency(i.unitPrice)}</td>
+            <td>${formatCurrency(i.subtotal)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <div style="text-align:right;font-size:16px;font-weight:700">Total: ${formatCurrency(o.totalPrice)}</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:8px">Created: ${formatDate(o.createdAt)}</div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>`);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function showUpdateStatus(id, currentStatus) {
+  const statuses = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
+  showModal(`
+    <div class="modal-title">Update Order Status</div>
+    <div class="form-group">
+      <label class="form-label">New Status</label>
+      <select class="form-input" id="newStatus">
+        ${statuses.map(s => `<option value="${s}" ${s === currentStatus ? 'selected' : ''}>${s}</option>`).join('')}
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateOrderStatus('${id}')">Update Status</button>
+    </div>`);
+}
+
+async function updateOrderStatus(id) {
+  const status = document.getElementById('newStatus').value;
+  try {
+    await api(`/orders/${id}/status`, { method: 'PUT', body: { status } });
+    toast(`Order status updated to ${status}`, 'success');
+    closeModal();
+    loadOrders();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function cancelOrder(id) {
+  if (!confirm('Cancel this order? Stock will be restored.')) return;
+  try {
+    await api(`/orders/${id}/status`, { method: 'PUT', body: { status: 'Cancelled' } });
+    toast('Order cancelled — stock restored', 'success');
+    loadOrders();
+    updateRestockBadge();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ==================== RESTOCK QUEUE ====================
+async function renderRestock() {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="page-header">
+      <div><div class="page-title">Restock Queue</div><div class="page-sub">Products below minimum threshold</div></div>
+    </div>
+    <div class="page-body" id="restockBody"><div class="text-center" style="padding:60px;color:var(--text3)"><div class="spinner" style="margin:0 auto"></div></div></div>`;
+  loadRestock();
+}
+
+async function loadRestock() {
+  try {
+    const queue = await api('/restock-queue');
+    if (!queue.length) {
+      document.getElementById('restockBody').innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">All stocked up!</div><div class="empty-sub">No products below threshold</div></div>`;
+      return;
+    }
+    document.getElementById('restockBody').innerHTML = `
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Product</th><th>Current Stock</th><th>Threshold</th><th>Priority</th><th>Added</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${queue.map(r => `<tr>
+                <td><strong style="color:var(--text)">${r.productName}</strong></td>
+                <td><span style="font-family:'DM Mono',monospace;color:${r.currentStock === 0 ? 'var(--danger)' : 'var(--warning)'}">${r.currentStock}</span></td>
+                <td><span style="font-family:'DM Mono',monospace;color:var(--text3)">${r.threshold}</span></td>
+                <td><span class="badge badge-${r.priority.toLowerCase()}">${r.priority}</span></td>
+                <td><span style="color:var(--text3);font-size:12px">${formatDate(r.addedAt)}</span></td>
+                <td>
+                  <div class="flex-row gap-2">
+                    <button class="btn btn-success btn-sm" onclick="showRestockFromQueue('${r.productId}','${r.productName}',${r.currentStock})">Restock</button>
+                    <button class="btn btn-secondary btn-sm" onclick="removeFromQueue('${r.id}')">Remove</button>
+                  </div>
+                </td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function showRestockFromQueue(productId, name, stock) {
+  showModal(`
+    <div class="modal-title">Restock: ${name}</div>
+    <div class="alert alert-warning">Current stock: <strong>${stock} units</strong></div>
+    <div class="form-group">
+      <label class="form-label">Add Quantity</label>
+      <input type="number" class="form-input" id="rqQty" placeholder="Enter quantity to add" min="1">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-success" onclick="doRestockFromQueue('${productId}')">✓ Restock</button>
+    </div>`);
+}
+
+async function doRestockFromQueue(productId) {
+  const qty = parseInt(document.getElementById('rqQty').value);
+  if (!qty || qty <= 0) return toast('Enter valid quantity', 'error');
+  try {
+    await api(`/products/${productId}/restock`, { method: 'POST', body: { quantity: qty } });
+    toast(`Restocked +${qty} units`, 'success');
+    closeModal();
+    loadRestock();
+    updateRestockBadge();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function removeFromQueue(id) {
+  try {
+    await api(`/restock-queue/${id}`, { method: 'DELETE' });
+    toast('Removed from queue', 'success');
+    loadRestock();
+    updateRestockBadge();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ==================== ACTIVITY LOG ====================
+async function renderActivity() {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="page-header">
+      <div><div class="page-title">Activity Log</div><div class="page-sub">Recent system actions</div></div>
+    </div>
+    <div class="page-body" id="activityBody"><div class="text-center" style="padding:60px;color:var(--text3)"><div class="spinner" style="margin:0 auto"></div></div></div>`;
+  try {
+    const logs = await api('/activity-log');
+    const typeLabels = { order: '🛒', stock: '📦', restock: '🔄', system: '⚙️', product: '🏷️' };
+    document.getElementById('activityBody').innerHTML = `
+      <div class="card">
+        <div class="card-body">
+          ${logs.map(l => `
+            <div class="log-item">
+              <div class="log-dot ${l.type}"></div>
+              <div style="flex:1">
+                <div class="log-msg">${typeLabels[l.type] || '📋'} ${l.message}</div>
+                <div class="log-time">${formatDate(l.time)}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ==================== INIT ====================
+if (token && currentUser) {
+  document.getElementById('authPage').classList.add('hidden');
+  document.getElementById('appPage').classList.remove('hidden');
+  document.getElementById('sidebarUser').textContent = `${currentUser.name} · ${currentUser.role}`;
+  navigate('dashboard');
+}
+
+// ESC to close modal
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
