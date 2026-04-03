@@ -1,3 +1,5 @@
+# Live link: https://inventory-system-app-opal.vercel.app
+
 # StockFlow — Smart Inventory & Order Management System
 
 A full-featured inventory and order management web application with real-time stock tracking, order fulfillment workflows, and conflict detection.
