@@ -428,7 +428,7 @@ let token = localStorage.getItem('inv_token');
 let currentUser = JSON.parse(localStorage.getItem('inv_user') || 'null');
 let currentPage = 'dashboard';
 
-// ==================== UTILS ====================
+// UTILS 
 function api(path, options = {}) {
   return fetch(API + path, {
     ...options,
@@ -490,7 +490,7 @@ function paginationHtml(page, pages, fn) {
   return html;
 }
 
-// ==================== AUTH ====================
+// AUTH 
 function switchAuthTab(tab) {
   document.querySelectorAll('.auth-tab').forEach((t, i) => t.classList.toggle('active', (i === 0) === (tab === 'login')));
   document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
@@ -547,7 +547,7 @@ function logout() {
   document.getElementById('authPage').classList.remove('hidden');
 }
 
-// ==================== NAVIGATION ====================
+// NAVIGATION
 function navigate(page) {
   currentPage = page;
   document.querySelectorAll('.nav-item').forEach(el => {
@@ -567,7 +567,7 @@ async function updateRestockBadge() {
   } catch {}
 }
 
-// ==================== DASHBOARD ====================
+// DASHBOARD
 async function renderDashboard() {
   document.getElementById('mainContent').innerHTML = `
     <div class="page-header">
@@ -671,7 +671,7 @@ async function renderDashboard() {
   } catch (e) { toast(e.message, 'error'); }
 }
 
-// ==================== CATEGORIES ====================
+// CATEGORIES
 let catsData = [];
 async function renderCategories() {
   document.getElementById('mainContent').innerHTML = `
@@ -741,7 +741,7 @@ async function deleteCategory(id, name) {
   } catch (e) { toast(e.message, 'error'); }
 }
 
-// ==================== PRODUCTS ====================
+// PRODUCTS
 let prodsPage = 1, prodsSearch = '', prodsStatus = '', prodsCat = '';
 async function renderProducts() {
   document.getElementById('mainContent').innerHTML = `
@@ -980,7 +980,7 @@ async function deleteProduct(id, name) {
   } catch (e) { toast(e.message, 'error'); }
 }
 
-// ==================== ORDERS ====================
+// ORDERS
 let ordersPage = 1, ordersSearch = '', ordersStatus = '', ordersDate = '';
 let orderItems = [], availableProducts = [];
 
@@ -1200,7 +1200,7 @@ async function cancelOrder(id) {
   } catch (e) { toast(e.message, 'error'); }
 }
 
-// ==================== RESTOCK QUEUE ====================
+// RESTOCK QUEUE
 async function renderRestock() {
   document.getElementById('mainContent').innerHTML = `
     <div class="page-header">
@@ -1278,7 +1278,7 @@ async function removeFromQueue(id) {
   } catch (e) { toast(e.message, 'error'); }
 }
 
-// ==================== ACTIVITY LOG ====================
+// ACTIVITY LOG 
 async function renderActivity() {
   document.getElementById('mainContent').innerHTML = `
     <div class="page-header">
@@ -1304,7 +1304,7 @@ async function renderActivity() {
   } catch (e) { toast(e.message, 'error'); }
 }
 
-// ==================== INIT ====================
+// INIT
 if (token && currentUser) {
   document.getElementById('authPage').classList.add('hidden');
   document.getElementById('appPage').classList.remove('hidden');
